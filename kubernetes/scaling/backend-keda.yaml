@@ -1,0 +1,43 @@
+
+apiVersion: v1
+kind: Secret
+metadata:
+  name: redis-db-secret
+type: Opaque
+data:
+  redis_username: RHVtbXktU2VjcmV0LVZhbHVlLVBsZWFzZS1DaGFuZ2UtQWNjcm9kaW5nbHk=
+  redis_password: RHVtbXktU2VjcmV0LVZhbHVlLVBsZWFzZS1DaGFuZ2UtQWNjcm9kaW5nbHk=
+--- 
+apiVersion: keda.sh/v1alpha1
+kind: TriggerAuthentication
+metadata:
+  name: keda-trigger-auth-redis-secret
+spec:
+  secretTargetRef:
+  - parameter: username
+    name: redis-db-secret
+    key: redis_username
+  - parameter: password
+    name: redis-db-secret
+    key: redis_password
+---
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: redis-scaledobject
+spec:
+  minReplicaCount: 1
+  maxReplicaCount: 10
+  scaleTargetRef:
+    name: chat-app-backend
+  triggers:
+  - type: redis
+    metadata:
+        host: healthy-beetle-21627.upstash.io
+        port: '6379'
+        passwordFromEnv: RHVtbXktU2VjcmV0LVZhbHVlLVBsZWFzZS1DaGFuZ2UtQWNjcm9kaW5nbHk=
+        enableTLS: "true"
+        listName: onlineUsers
+        listLength: "1"
+    authenticationRef:
+      name: keda-trigger-auth-redis-secret

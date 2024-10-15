@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name:  chat-app-backend
+  namespace: chat-app
+  labels:
+    app:  chat-app-backend
+spec:
+  selector:
+    matchLabels:
+      app: chat-app-backend
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app:  chat-app-backend
+    spec:
+      # initContainers:
+        # Init containers are exactly like regular containers, except:
+          # - Init containers always run to completion.
+          # - Each init container must complete successfully before the next one starts.
+      containers:
+      - name:  chat-app-backend
+        image:  farooqabdulla279/chat-app-backend:v6.0
+        env:
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: REDIS_URL
+        ports:
+        - containerPort: 3001
+      restartPolicy: Always

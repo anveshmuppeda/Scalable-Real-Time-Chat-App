@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: chat-app
+  namespace: chat-app
+  labels:
+    app: chat-app
+spec:
+  selector:
+    matchLabels:
+      app: chat-app
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: chat-app
+    spec:
+      containers:
+      - name: chat-app
+        image: farooqabdulla279/chat-app-frontend:v9.2
+        env:
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: REDIS_URL
+        - name: AUTH_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: AUTH_SECRET
+        - name: AUTH_GOOGLE_ID
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: AUTH_GOOGLE_ID
+        - name: AUTH_GOOGLE_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: AUTH_GOOGLE_SECRET
+        - name: NEXT_PUBLIC_DEV_Backend_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: NEXT_PUBLIC_DEV_Backend_URL
+        - name: NEXT_PUBLIC_PROD_Backend_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: NEXT_PUBLIC_PROD_Backend_URL
+        - name: NEXTAUTH_URL
+          valueFrom:
+            secretKeyRef:
+              name: chat-app-secrets
+              key: NEXTAUTH_URL
+        ports:
+        - containerPort: 3000
+      restartPolicy: Always

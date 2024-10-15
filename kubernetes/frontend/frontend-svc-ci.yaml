@@ -1,0 +1,14 @@
+# Service Manifest file for frontend Angular Application 
+apiVersion: v1
+kind: Service
+metadata:
+  name: chat-app-svc-ci
+spec:
+  selector:
+    app: chat-app
+  ports:
+  - protocol: "TCP"
+    port: 3000
+    targetPort: 3000
+    # If you modify this nodePort, ensure that you also update the CORS_ORIGIN_URL in the dotnet-deploy manifest.
+  type: ClusterIP
